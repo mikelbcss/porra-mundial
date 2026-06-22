@@ -6,6 +6,7 @@
         <tr>
           <th>#</th>
           <th class="group-table__team-col">Equipo</th>
+          <th title="Puntos">Pts</th>
           <th title="Jugados">PJ</th>
           <th title="Ganados">G</th>
           <th title="Empatados">E</th>
@@ -13,7 +14,6 @@
           <th title="Goles a favor">GF</th>
           <th title="Goles en contra">GC</th>
           <th title="Diferencia de goles">DG</th>
-          <th title="Puntos">Pts</th>
         </tr>
       </thead>
       <tbody>
@@ -24,6 +24,7 @@
         >
           <td>{{ row.posicion }}</td>
           <td class="group-table__team-col">{{ row.equipo }}</td>
+          <td class="group-table__pts">{{ row.puntos }}</td>
           <td>{{ row.jugados }}</td>
           <td>{{ row.ganados }}</td>
           <td>{{ row.empatados }}</td>
@@ -31,7 +32,6 @@
           <td>{{ row.golesFavor }}</td>
           <td>{{ row.golesContra }}</td>
           <td>{{ row.golesFavor - row.golesContra }}</td>
-          <td class="group-table__pts">{{ row.puntos }}</td>
         </tr>
       </tbody>
     </table>

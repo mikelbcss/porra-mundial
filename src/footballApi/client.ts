@@ -4,18 +4,23 @@ import type {
   RawScorersResponse,
 } from './rawTypes';
 
-const BASE = 'https://api.football-data.org/v4';
-const API_KEY = import.meta.env.VITE_FOOTBALL_API_KEY as string;
+/**
+ * Todas las llamadas van a nuestra Netlify Function (proxy),
+ * que añade la API key en el servidor. Así la clave nunca
+ * aparece en el bundle del cliente ni en el tráfico del browser.
+ *
+ * En local: arranca con `netlify dev` (no `npm run dev`) para que
+ * la función también corra en http://localhost:8888.
+ */
+const PROXY = '/.netlify/functions/football';
 const COMPETITION = (import.meta.env.VITE_COMPETITION as string | undefined) ?? 'WC';
 
-function headers(): HeadersInit {
-  return { 'X-Auth-Token': API_KEY };
-}
-
-async function apiFetch<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { headers: headers() });
+async function apiFetch<T>(apiPath: string): Promise<T> {
+  const url = `${PROXY}?path=${encodeURIComponent(apiPath)}`;
+  const res = await fetch(url);
   if (!res.ok) {
-    throw new Error(`football-data.org ${path}: HTTP ${res.status} ${res.statusText}`);
+    const text = await res.text().catch(() => '');
+    throw new Error(`football proxy ${apiPath}: HTTP ${res.status} — ${text}`);
   }
   return res.json() as Promise<T>;
 }

@@ -40,7 +40,7 @@ defineProps<{ items: PuntuacionParticipante[] }>();
 
 const detailCols = [
   { key: 'signoResultado',           short: '1X2',   label: 'Signo resultado (1/X/2)' },
-  { key: 'resultadoExacto',          short: 'Exacto', label: 'Resultado exacto' },
+  { key: 'resultadosExactos',          short: 'Exacto', label: 'Resultado exacto' },
   { key: 'clasificadoDieciseisavos', short: 'R32',   label: 'Clasificados a dieciseisavos' },
   { key: 'posicionGrupo',            short: 'Pos.',  label: 'Posición en grupo' },
   { key: 'clasificadoOctavos',       short: 'R16',   label: 'Clasificados a octavos' },

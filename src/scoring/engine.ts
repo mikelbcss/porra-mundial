@@ -6,7 +6,7 @@ import {
   PrediccionesParticipante,
   PuntuacionParticipante,
   ResultadosReales,
-} from '@/types/domain';
+} from "@/types/domain";
 
 /** Puntos por cada cosa, tal cual estaban definidos (aunque comentados) en el notebook. */
 export const PUNTOS = {
@@ -25,12 +25,12 @@ export const PUNTOS = {
   BOTA_DE_ORO: 25,
 } as const;
 
-const FASES_ELIMINATORIA: Exclude<Fase, 'GRUPOS'>[] = [
-  'DIECISEISAVOS',
-  'OCTAVOS',
-  'CUARTOS',
-  'SEMIS',
-  'FINAL',
+const FASES_ELIMINATORIA: Exclude<Fase, "GRUPOS">[] = [
+  "DIECISEISAVOS",
+  "OCTAVOS",
+  "CUARTOS",
+  "SEMIS",
+  "FINAL",
 ];
 
 function intersectionCount(predicho: string[], real: string[]): number {
@@ -38,32 +38,35 @@ function intersectionCount(predicho: string[], real: string[]): number {
   return predicho.filter((equipo) => realSet.has(equipo)).length;
 }
 
-function picksForFase(prediccion: PrediccionesParticipante, fase: Exclude<Fase, 'GRUPOS'>): string[] {
+function picksForFase(
+  prediccion: PrediccionesParticipante,
+  fase: Exclude<Fase, "GRUPOS">,
+): string[] {
   switch (fase) {
-    case 'DIECISEISAVOS':
+    case "DIECISEISAVOS":
       return prediccion.dieciseisavos;
-    case 'OCTAVOS':
+    case "OCTAVOS":
       return prediccion.octavos;
-    case 'CUARTOS':
+    case "CUARTOS":
       return prediccion.cuartos;
-    case 'SEMIS':
+    case "SEMIS":
       return prediccion.semis;
-    case 'FINAL':
+    case "FINAL":
       return prediccion.final;
   }
 }
 
-function puntosPorFase(fase: Exclude<Fase, 'GRUPOS'>): number {
+function puntosPorFase(fase: Exclude<Fase, "GRUPOS">): number {
   switch (fase) {
-    case 'DIECISEISAVOS':
+    case "DIECISEISAVOS":
       return PUNTOS.CLASIFICADO_DIECISEISAVOS;
-    case 'OCTAVOS':
+    case "OCTAVOS":
       return PUNTOS.CLASIFICADO_OCTAVOS;
-    case 'CUARTOS':
+    case "CUARTOS":
       return PUNTOS.CLASIFICADO_CUARTOS;
-    case 'SEMIS':
+    case "SEMIS":
       return PUNTOS.CLASIFICADO_SEMIS;
-    case 'FINAL':
+    case "FINAL":
       return PUNTOS.FINALISTA;
   }
 }
@@ -71,11 +74,14 @@ function puntosPorFase(fase: Exclude<Fase, 'GRUPOS'>): number {
 /** Puntos de resultados (signo + marcador exacto) de la fase de grupos. */
 function puntuarPartidosGrupos(
   prediccion: PrediccionesParticipante,
-  real: ResultadosReales
+  real: ResultadosReales,
 ): { signoResultado: number; resultadosExactos: number } {
-  const partidosRealesPorClave = new Map<string, ResultadosReales['partidos'][number]>();
+  const partidosRealesPorClave = new Map<
+    string,
+    ResultadosReales["partidos"][number]
+  >();
   for (const partido of real.partidos) {
-    if (partido.fase !== 'GRUPOS') continue;
+    if (partido.fase !== "GRUPOS") continue;
     partidosRealesPorClave.set(`${partido.casa}__${partido.fuera}`, partido);
   }
 
@@ -83,19 +89,48 @@ function puntuarPartidosGrupos(
   let resultadosExactos = 0;
 
   for (const pred of prediccion.partidosGrupos) {
-    const partidoReal = partidosRealesPorClave.get(`${pred.casa}__${pred.fuera}`);
-    if (!partidoReal || partidoReal.golCasa === null || partidoReal.golFuera === null) continue;
+    const partidoReal = partidosRealesPorClave.get(
+      `${pred.casa}__${pred.fuera}`,
+    );
 
-    if (pred.signo && partidoReal.signo && pred.signo === partidoReal.signo) {
-      signoResultado += PUNTOS.SIGNO;
-    }
-    if (
-      pred.golCasa !== null &&
-      pred.golFuera !== null &&
-      pred.golCasa === partidoReal.golCasa &&
-      pred.golFuera === partidoReal.golFuera
-    ) {
-      resultadosExactos += PUNTOS.RESULTADO_EXACTO;
+    console.log("pred", pred, "partidoReal", partidoReal);
+    if (partidoReal?.estado === "FINISHED") {
+      if (
+        !partidoReal ||
+        partidoReal.golCasa === null ||
+        partidoReal.golFuera === null
+      )
+        continue;
+
+      if (pred.signo && partidoReal.signo && pred.signo === partidoReal.signo) {
+        signoResultado += PUNTOS.SIGNO;
+        console.log(
+          "acierto signo",
+          pred.signo,
+          " para el partido",
+          pred.casa,
+          "vs",
+          pred.fuera,
+        );
+      }
+      if (
+        pred.golCasa !== null &&
+        pred.golFuera !== null &&
+        pred.golCasa === partidoReal.golCasa &&
+        pred.golFuera === partidoReal.golFuera
+      ) {
+        resultadosExactos += PUNTOS.RESULTADO_EXACTO;
+        console.log(
+          "acierto resultado",
+          pred.golCasa,
+          "-",
+          pred.golFuera,
+          " para el partido",
+          pred.casa,
+          "vs",
+          pred.fuera,
+        );
+      }
     }
   }
 
@@ -109,7 +144,7 @@ function puntuarPartidosGrupos(
  */
 function puntuarPuestosGrupo(
   prediccion: PrediccionesParticipante,
-  real: ResultadosReales
+  real: ResultadosReales,
 ): number {
   const clasificados = new Set(real.clasificadosPorFase.DIECISEISAVOS);
   const realPosPorEquipo = new Map<string, number>();
@@ -130,12 +165,15 @@ function puntuarPuestosGrupo(
 
 export function calcularPuntuacion(
   prediccion: PrediccionesParticipante,
-  real: ResultadosReales
+  real: ResultadosReales,
 ): PuntuacionParticipante {
-  const { signoResultado, resultadosExactos } = puntuarPartidosGrupos(prediccion, real);
+  const { signoResultado, resultadosExactos } = puntuarPartidosGrupos(
+    prediccion,
+    real,
+  );
   const puestosExactosGrupo = puntuarPuestosGrupo(prediccion, real);
 
-  const porFase: Record<Exclude<Fase, 'GRUPOS'>, number> = {
+  const porFase: Record<Exclude<Fase, "GRUPOS">, number> = {
     DIECISEISAVOS: 0,
     OCTAVOS: 0,
     CUARTOS: 0,
@@ -143,12 +181,17 @@ export function calcularPuntuacion(
     FINAL: 0,
   };
   for (const fase of FASES_ELIMINATORIA) {
-    const aciertos = intersectionCount(picksForFase(prediccion, fase), real.clasificadosPorFase[fase]);
+    const aciertos = intersectionCount(
+      picksForFase(prediccion, fase),
+      real.clasificadosPorFase[fase],
+    );
     porFase[fase] = aciertos * puntosPorFase(fase);
   }
 
   const campeon =
-    prediccion.podio.campeon && real.podio.campeon && prediccion.podio.campeon === real.podio.campeon
+    prediccion.podio.campeon &&
+    real.podio.campeon &&
+    prediccion.podio.campeon === real.podio.campeon
       ? PUNTOS.CAMPEON
       : 0;
   const subcampeon =
@@ -158,12 +201,16 @@ export function calcularPuntuacion(
       ? PUNTOS.SUBCAMPEON
       : 0;
   const tercero =
-    prediccion.podio.tercero && real.podio.tercero && prediccion.podio.tercero === real.podio.tercero
+    prediccion.podio.tercero &&
+    real.podio.tercero &&
+    prediccion.podio.tercero === real.podio.tercero
       ? PUNTOS.TERCERO
       : 0;
 
   const balonDeOro =
-    prediccion.jugadores.mvp && real.mvp && prediccion.jugadores.mvp === real.mvp
+    prediccion.jugadores.mvp &&
+    real.mvp &&
+    prediccion.jugadores.mvp === real.mvp
       ? PUNTOS.BALON_DE_ORO
       : 0;
   const botaDeOro =
@@ -196,7 +243,7 @@ export function calcularPuntuacion(
 
 export function calcularLeaderboard(
   participantes: PrediccionesParticipante[],
-  real: ResultadosReales
+  real: ResultadosReales,
 ): PuntuacionParticipante[] {
   return participantes
     .map((p) => calcularPuntuacion(p, real))
@@ -206,7 +253,7 @@ export function calcularLeaderboard(
 /** Para la pagina de "clasificacion real": que cruces de eliminatoria ha acertado cada uno. */
 export function calcularCruces(
   participantes: PrediccionesParticipante[],
-  real: ResultadosReales
+  real: ResultadosReales,
 ): CrucesParticipante[] {
   return participantes.map((prediccion) => {
     const aciertos: AciertoCruce[] = [];

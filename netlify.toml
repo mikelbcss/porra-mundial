@@ -2,7 +2,10 @@
   command   = "npm run build"
   publish   = "dist"
 
-# SPA routing: redirige todo al index.html para que vue-router funcione
+[functions]
+  directory = "netlify/functions"
+
+# SPA routing
 [[redirects]]
   from   = "/*"
   to     = "/index.html"

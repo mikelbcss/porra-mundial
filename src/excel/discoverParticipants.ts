@@ -1,15 +1,12 @@
+import participantNames from 'virtual:excel-manifest';
 import { parseParticipantUrl } from './parser';
 import type { PrediccionesParticipante } from '@/types/domain';
 
-const MANIFEST_URL = '/data/excel/manifest.json';
 const EXCEL_BASE = '/data/excel';
 
 /** Lee manifest.json y devuelve la lista de nombres de participantes. */
 export async function fetchParticipantNames(): Promise<string[]> {
-  const res = await fetch(MANIFEST_URL);
-  if (!res.ok) throw new Error(`No se pudo cargar el manifiesto: HTTP ${res.status}`);
-  const names: string[] = await res.json();
-  return names;
+  return Promise.resolve(participantNames);
 }
 
 /** Descarga y parsea todos los Excels listados en el manifiesto. */
