@@ -1,26 +1,30 @@
 // ─── Paleta (del notebook original) ──────────────────────────────────────────
-$color-navy:       #1D3241;
+$color-navy: #1d3241;
 $color-navy-light: #264758;
-$color-white:      #FEFFFF;
-$color-mint-light: #CCFCE3;
-$color-green:      #30D885;
+$color-white: #feffff;
+$color-mint-light: #ccfce3;
+$color-green: #30d885;
 $color-green-dark: #22a862;
-$color-gray-100:   #f4f6f8;
-$color-gray-200:   #e2e8ed;
-$color-gray-400:   #9aaab8;
-$color-gray-700:   #4a5a68;
-$color-accent:     #f0b429; // resultado exacto / podio
-$color-error:      #e53935;
-$color-live:       #ff5722;
+$color-gray-100: #f4f6f8;
+$color-gray-200: #e2e8ed;
+$color-gray-400: #9aaab8;
+$color-gray-700: #4a5a68;
+$color-accent: #f0b429; // resultado exacto / podio
+$color-error: #e53935;
+$color-live: #ff5722;
 
 // ─── Tipografía ───────────────────────────────────────────────────────────────
-$font-sans:   'Inter', system-ui, -apple-system, sans-serif;
-$font-mono:   'JetBrains Mono', 'Fira Mono', monospace;
-$font-size-xs:  0.75rem;
-$font-size-sm:  0.875rem;
-$font-size-md:  1rem;
-$font-size-lg:  1.125rem;
-$font-size-xl:  1.375rem;
+$font-sans:
+  "Inter",
+  system-ui,
+  -apple-system,
+  sans-serif;
+$font-mono: "JetBrains Mono", "Fira Mono", monospace;
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-md: 1rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.375rem;
 $font-size-2xl: 1.75rem;
 
 // ─── Espaciado ────────────────────────────────────────────────────────────────
@@ -35,23 +39,31 @@ $space-10: 2.5rem;
 $space-12: 3rem;
 
 // ─── Bordes / sombras ─────────────────────────────────────────────────────────
-$radius-sm:  4px;
-$radius-md:  8px;
-$radius-lg:  12px;
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
 $radius-full: 9999px;
-$shadow-sm:  0 1px 3px rgba(0,0,0,.12);
-$shadow-md:  0 4px 12px rgba(0,0,0,.15);
-$shadow-lg:  0 8px 24px rgba(0,0,0,.2);
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
 
 // ─── Breakpoints ──────────────────────────────────────────────────────────────
-$bp-sm:  640px;
-$bp-md:  768px;
-$bp-lg:  1024px;
-$bp-xl:  1280px;
+$bp-sm: 640px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1360px;
 
 // ─── Mixins ───────────────────────────────────────────────────────────────────
-@mixin flex-center { display: flex; align-items: center; justify-content: center; }
-@mixin flex-between { display: flex; align-items: center; justify-content: space-between; }
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 @mixin card {
   background: $color-white;
   border-radius: $radius-lg;
@@ -59,5 +71,7 @@ $bp-xl:  1280px;
   border: 1px solid $color-gray-200;
 }
 @mixin responsive($bp) {
-  @media (max-width: $bp) { @content; }
+  @media (max-width: $bp) {
+    @content;
+  }
 }

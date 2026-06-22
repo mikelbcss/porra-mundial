@@ -93,7 +93,7 @@ function puntuarPartidosGrupos(
       `${pred.casa}__${pred.fuera}`,
     );
 
-    console.log("pred", pred, "partidoReal", partidoReal);
+    console.log("partido", pred.casa, "vs", pred.fuera);
     if (partidoReal?.estado === "FINISHED") {
       if (
         !partidoReal ||
@@ -104,14 +104,6 @@ function puntuarPartidosGrupos(
 
       if (pred.signo && partidoReal.signo && pred.signo === partidoReal.signo) {
         signoResultado += PUNTOS.SIGNO;
-        console.log(
-          "acierto signo",
-          pred.signo,
-          " para el partido",
-          pred.casa,
-          "vs",
-          pred.fuera,
-        );
       }
       if (
         pred.golCasa !== null &&
@@ -120,16 +112,6 @@ function puntuarPartidosGrupos(
         pred.golFuera === partidoReal.golFuera
       ) {
         resultadosExactos += PUNTOS.RESULTADO_EXACTO;
-        console.log(
-          "acierto resultado",
-          pred.golCasa,
-          "-",
-          pred.golFuera,
-          " para el partido",
-          pred.casa,
-          "vs",
-          pred.fuera,
-        );
       }
     }
   }

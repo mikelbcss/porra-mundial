@@ -39,16 +39,16 @@ import type { PuntuacionParticipante } from '@/types/domain';
 defineProps<{ items: PuntuacionParticipante[] }>();
 
 const detailCols = [
-  { key: 'signoResultado',           short: '1X2',   label: 'Signo resultado (1/X/2)' },
-  { key: 'resultadosExactos',          short: 'Exacto', label: 'Resultado exacto' },
-  { key: 'clasificadoDieciseisavos', short: 'R32',   label: 'Clasificados a dieciseisavos' },
-  { key: 'posicionGrupo',            short: 'Pos.',  label: 'Posición en grupo' },
-  { key: 'clasificadoOctavos',       short: 'R16',   label: 'Clasificados a octavos' },
-  { key: 'clasificadoCuartos',       short: 'QF',    label: 'Clasificados a cuartos' },
-  { key: 'clasificadoSemis',         short: 'SF',    label: 'Clasificados a semis' },
-  { key: 'clasificadoFinal',         short: 'F',     label: 'Finalistas' },
-  { key: 'podio',                    short: 'Podio', label: 'Podio' },
-  { key: 'premiosIndividuales',      short: 'Premios', label: 'Pichichi / MVP' },
+  { key: 'signoResultado',           short: '1X2',   label: 'Signo resultado (1/X/2)', value: 3 },
+  { key: 'resultadosExactos',          short: 'Exacto', label: 'Resultado exacto', value: 2 },
+  { key: 'clasificadoDieciseisavos', short: 'R32',   label: 'Clasificados a dieciseisavos', value: 1 },
+  { key: 'posicionGrupo',            short: 'Pos.',  label: 'Posición en grupo', value: 2 },
+  { key: 'clasificadoOctavos',       short: 'R16',   label: 'Clasificados a octavos', value: 1 },
+  { key: 'clasificadoCuartos',       short: 'QF',    label: 'Clasificados a cuartos', value: 1 },
+  { key: 'clasificadoSemis',         short: 'SF',    label: 'Clasificados a semis', value: 1 },
+  { key: 'clasificadoFinal',         short: 'F',     label: 'Finalistas', value: 1 },
+  { key: 'podio',                    short: 'Podio', label: 'Podio (1º,2º,3º)', value: 3 },
+  { key: 'premiosIndividuales',      short: 'Premios', label: 'Pichichi / MVP (máximo goleador y mejor jugador)', value: 2 },
 ];
 
 function medal(i: number) {
