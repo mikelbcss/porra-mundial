@@ -1,0 +1,66 @@
+@use './variables' as *;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; }
+
+body {
+  font-family: $font-sans;
+  background: $color-gray-100;
+  color: $color-navy;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+a { color: inherit; text-decoration: none; }
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+// ─── Utilidades globales ──────────────────────────────────────────────────────
+
+.badge {
+  display: inline-block;
+  padding: 2px $space-2;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+
+  &--live    { background: $color-live; color: #fff; }
+  &--done    { background: $color-navy; color: $color-white; }
+  &--sched   { background: $color-gray-200; color: $color-gray-700; }
+  &--win     { background: $color-mint-light; color: $color-green-dark; }
+  &--exact   { background: $color-accent; color: $color-navy; }
+}
+
+.score {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: $font-size-lg;
+}
+
+.loading-overlay {
+  @include flex-center;
+  padding: $space-12;
+  color: $color-gray-400;
+  font-size: $font-size-lg;
+}
+
+.error-banner {
+  background: #fdecea;
+  border: 1px solid $color-error;
+  color: $color-error;
+  border-radius: $radius-md;
+  padding: $space-4;
+  margin: $space-4 0;
+}
+
+// ─── Scroll suave ─────────────────────────────────────────────────────────────
+html { scroll-behavior: smooth; }
