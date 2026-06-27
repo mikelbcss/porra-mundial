@@ -1,59 +1,42 @@
 import { loadAllParticipants } from '@/excel/discoverParticipants';
 import { fetchAllMatches, fetchStandings, fetchTopScorer } from '@/footballApi/client';
 import {
-  normalizeMatches,
-  normalizeStandings,
-  normalizeTopScorer,
-  deriveClasificadosPorFase,
-  derivePodio,
+  normalizeMatches, normalizeStandings, normalizeTopScorer,
+  deriveClasificadosPorFase, derivePodio,
 } from '@/footballApi/normalize';
 import { calcularLeaderboard, calcularCruces } from '@/scoring/engine';
 import type {
-  ResultadosReales,
-  PuntuacionParticipante,
-  CrucesParticipante,
-  PrediccionesParticipante,
-  PartidoReal,
-  PuestoGrupoReal,
-  MatchWithPredictions,
-  MatchDay,
+  ResultadosReales, PuntuacionParticipante, CrucesParticipante,
+  PrediccionesParticipante, PartidoReal, PuestoGrupoReal,
+  MatchWithPredictions, MatchDay, KnockoutMatch,
 } from '@/types/domain';
 
-const REFRESH_MS = Number(import.meta.env.VITE_REFRESH_INTERVAL_MS) || 120_000;
-const WINDOW_DAYS = Number(import.meta.env.VITE_MATCHDAY_WINDOW_DAYS) || 3;
-
-// ─── Tipos ────────────────────────────────────────────────────────────────────
+export const REFRESH_MS = Number(import.meta.env.VITE_REFRESH_INTERVAL_MS) || 120_000;
 
 export interface AppState {
   lastUpdated: Date | null;
   isLoading: boolean;
   error: string | null;
   leaderboard: PuntuacionParticipante[];
-  matchDays: MatchDay[];
+  allMatchDays: MatchDay[];           // TODOS los días (para navegación)
+  knockoutMatches: KnockoutMatch[];   // bracket real de eliminatorias
   standings: PuestoGrupoReal[];
   cruces: CrucesParticipante[];
   participantNames: string[];
   participantsData: PrediccionesParticipante[];
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function groupByDay(partidos: PartidoReal[], allParticipants: PrediccionesParticipante[]): MatchDay[] {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const windowMs = WINDOW_DAYS * 86_400_000;
-  const minDate = new Date(today.getTime() - windowMs);
-  const maxDate = new Date(today.getTime() + windowMs + 86_399_999);
-
+// Agrupa TODOS los partidos por día (sin filtro de ventana)
+function groupAllByDay(
+  partidos: PartidoReal[],
+  allParticipants: PrediccionesParticipante[],
+): MatchDay[] {
   const byDay = new Map<string, PartidoReal[]>();
   for (const p of partidos) {
-    const d = new Date(p.fechaUtc);
-    if (d < minDate || d > maxDate) continue;
     const key = p.fechaUtc.slice(0, 10);
     if (!byDay.has(key)) byDay.set(key, []);
     byDay.get(key)!.push(p);
   }
-
   const days: MatchDay[] = [];
   for (const [fecha, ps] of [...byDay.entries()].sort()) {
     const withPreds: MatchWithPredictions[] = ps.map((p) => ({
@@ -70,15 +53,37 @@ function groupByDay(partidos: PartidoReal[], allParticipants: PrediccionesPartic
   return days;
 }
 
-async function loadOverrides(): Promise<{ mvp: string | null; maximoGoleador: string | null }> {
+// Knockout bracket: partidos de fases eliminatorias con team o "?" si TBD
+function extractKnockoutMatches(partidos: PartidoReal[]): KnockoutMatch[] {
+  const knockout: KnockoutMatch[] = [];
+  const FASES_ORDER = ['DIECISEISAVOS', 'OCTAVOS', 'CUARTOS', 'SEMIS', 'TERCER_PUESTO', 'FINAL'];
+  for (const fase of FASES_ORDER) {
+    const ps = partidos
+      .filter((p) => p.fase === fase)
+      .sort((a, b) => a.fechaUtc.localeCompare(b.fechaUtc));
+    for (const p of ps) {
+      knockout.push({
+        id: p.id,
+        fase: p.fase as KnockoutMatch['fase'],
+        fechaUtc: p.fechaUtc,
+        estado: p.estado,
+        casa: p.casa || '?',
+        fuera: p.fuera || '?',
+        golCasa: p.golCasa,
+        golFuera: p.golFuera,
+      });
+    }
+  }
+  return knockout;
+}
+
+async function loadOverrides() {
   try {
     const res = await fetch('/data/overrides.json');
     if (res.ok) return res.json();
-  } catch { /* ignorar */ }
+  } catch { /**/ }
   return { mvp: null, maximoGoleador: null };
 }
-
-// ─── Función de refresco ──────────────────────────────────────────────────────
 
 export async function refreshData(): Promise<Partial<AppState>> {
   const [participantsData, rawMatches, rawStandings, rawScorers, overrides] = await Promise.all([
@@ -96,9 +101,7 @@ export async function refreshData(): Promise<Partial<AppState>> {
   const podioReal = derivePodio(rawMatches.matches);
 
   const resultados: ResultadosReales = {
-    partidos,
-    clasificacionGrupos: standings,
-    clasificadosPorFase,
+    partidos, clasificacionGrupos: standings, clasificadosPorFase,
     podio: podioReal,
     mvp: overrides.mvp ?? null,
     maximoGoleador: overrides.maximoGoleador ?? topScorer,
@@ -108,12 +111,11 @@ export async function refreshData(): Promise<Partial<AppState>> {
   return {
     leaderboard: calcularLeaderboard(participantsData, resultados),
     cruces: calcularCruces(participantsData, resultados),
-    matchDays: groupByDay(partidos, participantsData),
+    allMatchDays: groupAllByDay(partidos, participantsData),
+    knockoutMatches: extractKnockoutMatches(partidos),
     standings,
     participantNames: participantsData.map((p) => p.nombre),
     participantsData,
     lastUpdated: new Date(),
   };
 }
-
-export { REFRESH_MS };

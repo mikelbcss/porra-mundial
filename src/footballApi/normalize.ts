@@ -73,6 +73,9 @@ export function deriveClasificadosPorFase(
     const equipos = new Set<string>();
     for (const partido of partidos) {
       if (partido.fase !== fase) continue;
+      // Solo contar equipos de partidos ya JUGADOS — los SCHEDULED ya tienen
+      // el cuadro montado por la API pero no se han disputado todavía.
+      if (partido.estado !== 'FINISHED') continue;
       equipos.add(partido.casa);
       equipos.add(partido.fuera);
     }

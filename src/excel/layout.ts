@@ -71,7 +71,7 @@ export const LAYOUT = {
   /** Podio: campeon, subcampeon, tercero (en ese orden), columna AA. */
   podio: { headerRow0: 148, nrows: 3, cols: { valor: 'AA' } },
   /** Jugadores: fila 0 = pichichi (Bota de Oro), fila 4 = MVP (Balon de Oro). Columna AA. */
-  jugadores: { headerRow0: 152, nrows: 9, cols: { valor: 'AA' }, filaPichichi: 0, filaMvp: 4 },
+  jugadores: { headerRow0: 152, nrows: 9, cols: { valor: 'AA' }, filaPichichi: 0, filaPichichi2: 1, filaPichichi3: 2, filaMvp: 4, filaMvp2: 5, filaMvp3: 6 },
 } as const;
 
 /** Patron para extraer el nombre del participante del nombre de fichero. */

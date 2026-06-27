@@ -2,11 +2,15 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { refreshData, REFRESH_MS } from '@/services/dataService';
 import type { AppState } from '@/services/dataService';
-import type { PuestoGrupoReal, PrediccionesParticipante, PuntuacionParticipante, MatchDay, CrucesParticipante } from '@/types/domain';
+import type {
+  PuestoGrupoReal, PrediccionesParticipante, PuntuacionParticipante,
+  MatchDay, CrucesParticipante, KnockoutMatch,
+} from '@/types/domain';
 
 export const useMainStore = defineStore('main', () => {
   const leaderboard = ref<PuntuacionParticipante[]>([]);
-  const matchDays = ref<MatchDay[]>([]);
+  const allMatchDays = ref<MatchDay[]>([]);
+  const knockoutMatches = ref<KnockoutMatch[]>([]);
   const standings = ref<PuestoGrupoReal[]>([]);
   const cruces = ref<CrucesParticipante[]>([]);
   const participantNames = ref<string[]>([]);
@@ -14,7 +18,6 @@ export const useMainStore = defineStore('main', () => {
   const lastUpdated = ref<Date | null>(null);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
-
   let timer: ReturnType<typeof setInterval> | null = null;
 
   const standingsByGroup = computed(() => {
@@ -33,7 +36,8 @@ export const useMainStore = defineStore('main', () => {
     try {
       const state = await refreshData() as AppState;
       leaderboard.value = state.leaderboard ?? [];
-      matchDays.value = state.matchDays ?? [];
+      allMatchDays.value = state.allMatchDays ?? [];
+      knockoutMatches.value = state.knockoutMatches ?? [];
       standings.value = state.standings ?? [];
       cruces.value = state.cruces ?? [];
       participantNames.value = state.participantNames ?? [];
@@ -46,20 +50,12 @@ export const useMainStore = defineStore('main', () => {
     }
   }
 
-  function startPolling() {
-    fetchAll();
-    timer = setInterval(fetchAll, REFRESH_MS);
-  }
-
-  function stopPolling() {
-    if (timer !== null) { clearInterval(timer); timer = null; }
-  }
+  function startPolling() { fetchAll(); timer = setInterval(fetchAll, REFRESH_MS); }
+  function stopPolling() { if (timer !== null) { clearInterval(timer); timer = null; } }
 
   return {
-    leaderboard, matchDays, standings, cruces,
-    participantNames, participantsData,
-    lastUpdated, isLoading, error,
-    standingsByGroup,
-    fetchAll, startPolling, stopPolling,
+    leaderboard, allMatchDays, knockoutMatches, standings, cruces,
+    participantNames, participantsData, lastUpdated, isLoading, error,
+    standingsByGroup, fetchAll, startPolling, stopPolling,
   };
 });

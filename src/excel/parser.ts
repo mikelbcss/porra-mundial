@@ -92,10 +92,15 @@ function readPodio(grid: SheetGrid): PrediccionPodio {
 }
 
 function readJugadores(grid: SheetGrid): PrediccionJugadores {
-  const { headerRow0, cols, filaPichichi, filaMvp } = LAYOUT.jugadores;
+  const { headerRow0, cols, filaPichichi, filaPichichi2, filaPichichi3, filaMvp, filaMvp2, filaMvp3 } = LAYOUT.jugadores;
+  const v = (fila: number) => cellAsString(grid, headerRow0 + 1 + fila, cols.valor);
   return {
-    pichichi: cellAsString(grid, headerRow0 + 1 + filaPichichi, cols.valor),
-    mvp: cellAsString(grid, headerRow0 + 1 + filaMvp, cols.valor),
+    pichichi: v(filaPichichi),
+    pichichi2: v(filaPichichi2),
+    pichichi3: v(filaPichichi3),
+    mvp: v(filaMvp),
+    mvp2: v(filaMvp2),
+    mvp3: v(filaMvp3),
   };
 }
 
@@ -147,7 +152,7 @@ export async function parseParticipantUrl(
     tercerPuesto: safe('tercerPuesto', () => readTeamList(grid, LAYOUT.tercerPuesto), []),
     final: safe('final', () => readTeamList(grid, LAYOUT.final), []),
     podio: safe('podio', () => readPodio(grid), { campeon: null, subcampeon: null, tercero: null }),
-    jugadores: safe('jugadores', () => readJugadores(grid), { pichichi: null, mvp: null }),
+    jugadores: safe('jugadores', () => readJugadores(grid), { pichichi: null, pichichi2: null, pichichi3: null, mvp: null, mvp2: null, mvp3: null }),
     erroresLectura,
   };
 }
@@ -164,7 +169,7 @@ function emptyParticipant(nombre: string, erroresLectura: string[]): Prediccione
     tercerPuesto: [],
     final: [],
     podio: { campeon: null, subcampeon: null, tercero: null },
-    jugadores: { pichichi: null, mvp: null },
+    jugadores: { pichichi: null, pichichi2: null, pichichi3: null, mvp: null, mvp2: null, mvp3: null },
     erroresLectura,
   };
 }

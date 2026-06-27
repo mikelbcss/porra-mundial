@@ -1,45 +1,58 @@
 /**
- * Proxy serverless para football-data.org.
- * La API key vive solo en el servidor (variable de entorno FOOTBALL_API_KEY),
- * nunca en el bundle del cliente.
- *
- * Uso desde el cliente:
- *   GET /.netlify/functions/football?path=/competitions/WC/matches
+ * Proxy para football-data.org con rotación automática de API keys.
+ * Configura hasta 2 claves: FOOTBALL_API_KEY y FOOTBALL_API_KEY_2
+ * Si la primera devuelve 429 (rate limit), reintenta con la segunda.
  */
+async function tryFetch(apiPath, key) {
+  const res = await fetch(`https://api.football-data.org/v4${apiPath}`, {
+    headers: { 'X-Auth-Token': key },
+  });
+  return res;
+}
+
 export const handler = async (event) => {
   const path = event.queryStringParameters?.path ?? '';
-
   if (!path.startsWith('/')) {
     return { statusCode: 400, body: JSON.stringify({ error: 'path inválido' }) };
   }
 
-  const apiKey = process.env.FOOTBALL_API_KEY;
-  if (!apiKey) {
-    return { statusCode: 500, body: JSON.stringify({ error: 'FOOTBALL_API_KEY no configurada' }) };
+  const keys = [
+    process.env.FOOTBALL_API_KEY,
+    process.env.FOOTBALL_API_KEY_2,
+  ].filter(Boolean);
+
+  if (!keys.length) {
+    return { statusCode: 500, body: JSON.stringify({ error: 'Sin API keys configuradas' }) };
   }
 
-  const url = `https://api.football-data.org/v4${path}`;
+  let lastStatus = 500;
+  let lastBody = '';
 
-  try {
-    const res = await fetch(url, {
-      headers: { 'X-Auth-Token': apiKey },
-    });
-
-    const body = await res.text();
-
-    // Pasamos los headers de rate-limit para posible uso futuro en el cliente
-    const headers = {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    };
-    const rl = res.headers.get('X-Requests-Available-Minute');
-    if (rl) headers['X-Requests-Available-Minute'] = rl;
-
-    return { statusCode: res.status, headers, body };
-  } catch (err) {
-    return {
-      statusCode: 502,
-      body: JSON.stringify({ error: `Error conectando con football-data.org: ${err.message}` }),
-    };
+  for (const key of keys) {
+    try {
+      const res = await tryFetch(path, key);
+      const body = await res.text();
+      // Si no es 429 (rate limit), devolvemos esta respuesta
+      if (res.status !== 429) {
+        return {
+          statusCode: res.status,
+          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+          body,
+        };
+      }
+      // 429 → probar con la siguiente key
+      lastStatus = res.status;
+      lastBody = body;
+      console.warn(`API key terminada en ...${key.slice(-4)} agotada (429), rotando...`);
+    } catch (err) {
+      lastBody = JSON.stringify({ error: String(err) });
+    }
   }
+
+  // Todas las keys agotadas
+  return {
+    statusCode: lastStatus,
+    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+    body: lastBody,
+  };
 };

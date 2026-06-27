@@ -32,7 +32,7 @@ export async function loadAllParticipants(): Promise<PrediccionesParticipante[]>
       tercerPuesto: [],
       final: [],
       podio: { campeon: null, subcampeon: null, tercero: null },
-      jugadores: { pichichi: null, mvp: null },
+      jugadores: { pichichi: null, pichichi2: null, pichichi3: null, mvp: null, mvp2: null, mvp3: null },
       erroresLectura: [`Error de carga: ${(r.reason as Error).message}`],
     };
   });

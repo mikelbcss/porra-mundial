@@ -39,16 +39,19 @@ import type { PuntuacionParticipante } from '@/types/domain';
 defineProps<{ items: PuntuacionParticipante[] }>();
 
 const detailCols = [
-  { key: 'signoResultado',           short: '1X2',   label: 'Signo resultado (1/X/2)', value: 3 },
-  { key: 'resultadosExactos',          short: 'Exacto', label: 'Resultado exacto', value: 2 },
-  { key: 'clasificadoDieciseisavos', short: 'R32',   label: 'Clasificados a dieciseisavos', value: 1 },
-  { key: 'posicionGrupo',            short: 'Pos.',  label: 'Posición en grupo', value: 2 },
-  { key: 'clasificadoOctavos',       short: 'R16',   label: 'Clasificados a octavos', value: 1 },
-  { key: 'clasificadoCuartos',       short: 'QF',    label: 'Clasificados a cuartos', value: 1 },
-  { key: 'clasificadoSemis',         short: 'SF',    label: 'Clasificados a semis', value: 1 },
-  { key: 'clasificadoFinal',         short: 'F',     label: 'Finalistas', value: 1 },
-  { key: 'podio',                    short: 'Podio', label: 'Podio (1º,2º,3º)', value: 3 },
-  { key: 'premiosIndividuales',      short: 'Premios', label: 'Pichichi / MVP (máximo goleador y mejor jugador)', value: 2 },
+  { key: 'signoResultado',          short: '1X2',    label: 'Signo (1/X/2) · 3 pts c/u' },
+  { key: 'resultadosExactos',       short: 'Exacto', label: 'Resultado exacto · +2 pts c/u' },
+  { key: 'clasificadosDieciseisavos', short: 'R32',  label: 'Clasificados a dieciseisavos · 3 pts c/u' },
+  { key: 'puestosExactosGrupo',     short: 'Pos.',   label: 'Puesto exacto en grupo · 2 pts c/u' },
+  { key: 'clasificadosOctavos',     short: 'R16',    label: 'Clasificados a octavos · 10 pts c/u' },
+  { key: 'clasificadosCuartos',     short: 'QF',     label: 'Clasificados a cuartos · 20 pts c/u' },
+  { key: 'clasificadosSemis',       short: 'SF',     label: 'Clasificados a semifinales · 30 pts c/u' },
+  { key: 'finalistas',              short: 'Final',  label: 'Finalistas · 40 pts c/u' },
+  { key: 'campeon',                 short: '🥇',     label: 'Campeón · 20 pts' },
+  { key: 'subcampeon',              short: '🥈',     label: 'Subcampeón · 10 pts' },
+  { key: 'tercero',                 short: '🥉',     label: 'Tercer puesto · 5 pts' },
+  { key: 'balonDeOro',             short: 'MVP',    label: 'Balón de oro · 25 pts' },
+  { key: 'botaDeOro',              short: 'Bota',   label: 'Bota de oro · 25 pts' },
 ];
 
 function medal(i: number) {

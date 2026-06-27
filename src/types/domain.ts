@@ -38,8 +38,12 @@ export interface PrediccionPodio {
 }
 
 export interface PrediccionJugadores {
-  pichichi: string | null; // Bota de Oro
-  mvp: string | null; // Balon de Oro
+  pichichi: string | null;   // Bota de Oro
+  pichichi2: string | null;  // Bota de Plata
+  pichichi3: string | null;  // Bota de Bronce
+  mvp: string | null;        // Balón de Oro
+  mvp2: string | null;       // Balón de Plata
+  mvp3: string | null;       // Balón de Bronce
 }
 
 /** Todas las predicciones leidas del Excel de un participante. */
@@ -162,4 +166,28 @@ export interface MatchWithPredictions extends PartidoReal {
 export interface MatchDay {
   fecha: string;
   partidos: MatchWithPredictions[];
+}
+
+// ─── Bracket eliminatorias ────────────────────────────────────────────────────
+
+export interface KnockoutMatch {
+  id: number;
+  fase: Exclude<Fase, 'GRUPOS'>;
+  fechaUtc: string;
+  estado: EstadoPartido;
+  casa: string;   // '?' si aún no se sabe
+  fuera: string;  // '?' si aún no se sabe
+  golCasa: number | null;
+  golFuera: number | null;
+}
+
+// ─── Jugadores con oro/plata/bronce ──────────────────────────────────────────
+
+export interface PrediccionJugadoresExtended {
+  pichichi: string | null;       // bota de oro
+  pichichi2: string | null;      // bota de plata
+  pichichi3: string | null;      // bota de bronce
+  mvp: string | null;            // balón de oro
+  mvp2: string | null;           // balón de plata
+  mvp3: string | null;           // balón de bronce
 }
