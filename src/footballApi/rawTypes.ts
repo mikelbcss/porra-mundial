@@ -15,6 +15,15 @@ export interface RawScore {
   halfTime?: { home: number | null; away: number | null };
 }
 
+export interface RawGoal {
+  minute: number | null;
+  injuryTime: number | null;
+  type: 'REGULAR' | 'OWN' | 'PENALTY';
+  team: { id: number; name: string };
+  scorer: { id: number; name: string };
+  assist: { id: number; name: string } | null;
+}
+
 export interface RawMatch {
   id: number;
   utcDate: string;
@@ -25,6 +34,10 @@ export interface RawMatch {
   homeTeam: RawTeam;
   awayTeam: RawTeam;
   score: RawScore;
+  /** Minuto actual (partidos en juego). Puede no venir en el endpoint de competition/matches */
+  minute?: number | null;
+  /** Lista de goles con goleador y minuto */
+  goals?: RawGoal[];
 }
 
 export interface RawMatchesResponse {

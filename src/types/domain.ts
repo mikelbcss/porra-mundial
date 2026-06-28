@@ -80,14 +80,16 @@ export interface PartidoReal {
   id: number;
   fechaUtc: string; // ISO date
   estado: EstadoPartido;
-  fase: Fase | 'DESCONOCIDA';
-  grupo: string | null; // "Group A" -> lo normalizamos a "A"
+  fase: Fase | 'TERCER_PUESTO' | 'DESCONOCIDA';
+  grupo: string | null;
   casa: string;
   fuera: string;
   golCasa: number | null;
   golFuera: number | null;
   signo: Signo | null;
-  jornada: string | null; // "J1" etc, solo aplica si es fase de grupos
+  jornada: string | null;
+  minutoActual: number | null;
+  goles: Gol[];
 }
 
 export interface PuestoGrupoReal {
@@ -190,4 +192,16 @@ export interface PrediccionJugadoresExtended {
   mvp: string | null;            // balón de oro
   mvp2: string | null;           // balón de plata
   mvp3: string | null;           // balón de bronce
+}
+
+// ─── Goles en tiempo real ─────────────────────────────────────────────────────
+
+export interface Gol {
+  minuto: number | null;
+  minutoAnadido: number | null;
+  tipo: 'REGULAR' | 'PROPIA' | 'PENALTI';
+  equipo: string;
+  goleador: string;
+  asistencia: string | null;
+  esCasa: boolean;
 }
